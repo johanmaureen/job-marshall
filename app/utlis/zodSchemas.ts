@@ -7,6 +7,6 @@ export const companySchema = z.object({
     .string()
     .min(10, "Please provide some information about your company"),
   logo: z.string().min(1, "Please upload a logo"),
-  website: z.url("Please enter a valid URL"),
+  website: z.string().url("Please enter a valid URL"),
   xAccount: z.string().optional(),
 });
