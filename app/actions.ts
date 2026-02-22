@@ -5,12 +5,31 @@ import { requireUser } from "./utlis/requireUser";
 import { companySchema, jobSeekerSchema } from "./utlis/zodSchemas";
 import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import arcjet, { detectBot, shield } from "./utlis/arcjet";
+import { request } from "@arcjet/next";
 
+const aj = arcjet
+  .withRule(
+    shield({
+      mode: "LIVE",
+    }),
+  )
+  .withRule(
+    detectBot({
+      mode: "LIVE",
+      allow: [],
+    }),
+  );
 export async function createCompany(data: z.infer<typeof companySchema>) {
   const session = await requireUser();
 
   if (!session?.user) {
     throw new Error("no user, please login");
+  }
+  const req = await request();
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
   }
 
   const validateData = companySchema.parse(data);
@@ -37,6 +56,11 @@ export async function createJobSeeker(data: z.infer<typeof jobSeekerSchema>) {
 
   if (!session?.user) {
     throw new Error("no user, please login");
+  }
+  const req = await request();
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
   }
 
   const validatedData = jobSeekerSchema.parse(data);
