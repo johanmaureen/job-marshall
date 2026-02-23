@@ -29,6 +29,12 @@ importers:
       '@prisma/extension-accelerate':
         specifier: ^3.0.1
         version: 3.0.1(@prisma/client@7.4.0(prisma@7.4.0(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3))(typescript@5.9.3))
+      '@tiptap/extension-text-align':
+        specifier: ^3.20.0
+        version: 3.20.0(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))
+      '@tiptap/extension-typography':
+        specifier: ^3.20.0
+        version: 3.20.0(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))
       '@tiptap/pm':
         specifier: ^3.20.0
         version: 3.20.0
@@ -1858,8 +1864,18 @@ packages:
     peerDependencies:
       '@tiptap/core': ^3.20.0
 
+  '@tiptap/extension-text-align@3.20.0':
+    resolution: {integrity: sha512-4s0r+bovtH6yeGDUD+Ui8j5WOV5koB5P6AuzOMqoLwaFGRSkKf64ly6DXjjmjIgnYCLZN/XO6llaQKVVdvad2g==}
+    peerDependencies:
+      '@tiptap/core': ^3.20.0
+
   '@tiptap/extension-text@3.20.0':
     resolution: {integrity: sha512-tf8bE8tSaOEWabCzPm71xwiUhyMFKqY9jkP5af3Kr1/F45jzZFIQAYZooHI/+zCHRrgJ99MQHKHe1ZNvODrKHQ==}
+    peerDependencies:
+      '@tiptap/core': ^3.20.0
+
+  '@tiptap/extension-typography@3.20.0':
+    resolution: {integrity: sha512-XpstIJ/hCK6+N87DdzjaYie1iH1gunbDK0UCsqsLemd8rMR/WAlF04M/yeJ6F2QtNzNh83bkoTxyNAHLDdUm2A==}
     peerDependencies:
       '@tiptap/core': ^3.20.0
 
@@ -6467,7 +6483,15 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.20.0(@tiptap/pm@3.20.0)
 
+  '@tiptap/extension-text-align@3.20.0(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))':
+    dependencies:
+      '@tiptap/core': 3.20.0(@tiptap/pm@3.20.0)
+
   '@tiptap/extension-text@3.20.0(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))':
+    dependencies:
+      '@tiptap/core': 3.20.0(@tiptap/pm@3.20.0)
+
+  '@tiptap/extension-typography@3.20.0(@tiptap/core@3.20.0(@tiptap/pm@3.20.0))':
     dependencies:
       '@tiptap/core': 3.20.0(@tiptap/pm@3.20.0)
 

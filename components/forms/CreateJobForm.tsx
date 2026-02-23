@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { countryList } from "@/app/utlis/countrysList";
 import { SalaryRangeSelector } from "../general/SalaryRangeSelector";
+import { JobDescriptionEditor } from "../richTextEditors/JobDescriptionEditor";
 
 interface CreateJobFormProps {
   companyName: string;
@@ -177,6 +178,19 @@ export function CreateJobForm({
                 </FormMessage>
               </FormItem>
             </div>
+            <FormField
+              control={form.control}
+              name="jobDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Job Description</FormLabel>
+                  <FormControl>
+                    <JobDescriptionEditor />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
       </form>
