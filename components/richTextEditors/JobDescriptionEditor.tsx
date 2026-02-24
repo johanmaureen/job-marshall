@@ -2,14 +2,35 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 //import { FloatingMenu } from "@tiptap/react/menus";
 import StarterKit from "@tiptap/starter-kit";
-import { Menubar } from "./MenuBar";
 import TextAlign from "@tiptap/extension-text-align";
 import Typography from "@tiptap/extension-typography";
+import { Menubar } from "./MenuBar";
+import { ControllerRenderProps } from "react-hook-form";
 
-export function JobDescriptionEditor() {
+interface iAppProps {
+  field: ControllerRenderProps;
+}
+
+export function JobDescriptionEditor({ field }: iAppProps) {
   const editor = useEditor({
-    extensions: [StarterKit, TextAlign, Typography],
+    extensions: [
+      StarterKit,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
+      Typography,
+    ],
     immediatelyRender: false,
+    editorProps: {
+      attributes: {
+        class:
+          "min-h-[300px] p-4 max-w-none focus:ouline-none prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      field.onChange(JSON.stringify(editor.getJSON()));
+    },
+    content: field.value ? JSON.parse(field.value) : "",
   });
 
   return (
