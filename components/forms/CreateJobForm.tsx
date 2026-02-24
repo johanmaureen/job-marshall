@@ -32,6 +32,7 @@ import { useState } from "react";
 import { countryList } from "@/app/utlis/countrysList";
 import { SalaryRangeSelector } from "../general/SalaryRangeSelector";
 import { JobDescriptionEditor } from "../richTextEditors/JobDescriptionEditor";
+import { BenefitsSelector } from "../general/BenefitsSelector";
 
 interface CreateJobFormProps {
   companyName: string;
@@ -199,7 +200,7 @@ export function CreateJobForm({
                 <FormItem>
                   <FormLabel>Benefits</FormLabel>
                   <FormControl>
-                    <p>Benefits selector</p>
+                    <BenefitsSelector field={field as any} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
