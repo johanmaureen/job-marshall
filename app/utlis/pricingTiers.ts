@@ -1,4 +1,10 @@
-export const jobListingDurationPricing = [
+interface iAppProps {
+  days: number;
+  price: number;
+  description: string;
+}
+
+export const jobListingDurationPricing: iAppProps[] = [
   {
     days: 30,
     price: 99,

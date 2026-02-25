@@ -39,6 +39,7 @@ import { JobDescriptionEditor } from "../richTextEditors/JobDescriptionEditor";
 import { BenefitsSelector } from "../general/BenefitsSelector";
 import { UploadDropzone } from "../general/UploadThingREExported";
 import { JobListingDurationSelector } from "../general/JobListingDurationSelector";
+import { createJob } from "@/app/actions";
 //import JobDescriptionEditor from "../richTextEditor/JobDescriptionEditor";
 //import BenefitsSelector from "../general/BenefitsSelector";
 //import { JobListingDurationSelector } from "../general/JobListingDurationSelector";
@@ -85,11 +86,13 @@ export function CreateJobForm({
   async function onSubmit(values: z.infer<typeof jobSchema>) {
     try {
       setPending(true);
-      console.log(values);
-
-      //await createJob(values);
-    } catch {
-      toast.error("Something went wrong. Please try again.");
+      await createJob(values);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof Error && error.message !== "NEXT_REDIRECT") {
+        toast.error("Something went wrong. Please try again.");
+        console.log(error);
+      }
     } finally {
       setPending(false);
     }
