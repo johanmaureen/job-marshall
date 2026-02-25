@@ -179,8 +179,8 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
       },
     ],
     mode: "payment",
-    success_url: `${process.env.NEXT_PUBLIC_URL}/paymant/success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_URL}/paymant/cancel`,
+    success_url: `${process.env.NEXT_PUBLIC_URL}/payment/success`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/payment/cancel`,
   });
 
   if (!stripeSession.url) {
