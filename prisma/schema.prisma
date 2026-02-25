@@ -17,6 +17,8 @@ model User {
   sessions            Session[]
   onBoardingCompleted Boolean   @default(false)
 
+  stripeCustomerId String?
+
   userType UserType?
 
   Company   Company?

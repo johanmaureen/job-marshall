@@ -7,6 +7,8 @@ import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
 import arcjet, { detectBot, shield } from "./utlis/arcjet";
 import { request } from "@arcjet/next";
+import { stripe } from "./utlis/stripe";
+import { jobListingDurationPricing } from "./utlis/pricingTiers";
 
 const aj = arcjet
   .withRule(
@@ -105,12 +107,36 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
     },
     select: {
       id: true,
+      user: {
+        select: {
+          stripeCustomerId: true,
+        },
+      },
     },
   });
 
   if (!company?.id) {
     return redirect("/");
   }
+
+  let stripeCustomerId = company.user.stripeCustomerId;
+
+  if (!stripeCustomerId) {
+    const customer = await stripe.customers.create({
+      email: session.user.email as string,
+      name: session.user.name as string,
+    });
+    stripeCustomerId = customer.id;
+  }
+
+  await prisma.user.update({
+    where: {
+      id: session.user.id,
+    },
+    data: {
+      stripeCustomerId: stripeCustomerId,
+    },
+  });
 
   await prisma.jobPost.create({
     data: {
@@ -126,5 +152,40 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
     },
   });
 
-  return redirect("/");
+  const pricingTier = jobListingDurationPricing.find(
+    (tier) => tier.days === validatedData.listingDuration,
+  );
+
+  if (!pricingTier) {
+    throw new Error("Invalid Listing duration selected");
+  }
+
+  const stripeSession = await stripe.checkout.sessions.create({
+    customer: stripeCustomerId,
+    line_items: [
+      {
+        price_data: {
+          product_data: {
+            name: `Job Posting - ${pricingTier.days} Days`,
+            description: pricingTier.description,
+            images: [
+              "https://wmc43tpuyw.ufs.sh/f/fpPKTfIq2LuO3z7eS6fR1AJKZdO0DyTq2NewVtGIgfM9sQXE",
+            ],
+          },
+          currency: "USD",
+          unit_amount: pricingTier.price * 100, // Convert to cents for Stripe
+        },
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${process.env.NEXT_PUBLIC_URL}/paymant/success`,
+    cancel_url: `${process.env.NEXT_PUBLIC_URL}/paymant/cancel`,
+  });
+
+  if (!stripeSession.url) {
+    throw new Error("Stripe error returned no url");
+  }
+
+  return redirect(stripeSession.url);
 }
