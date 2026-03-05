@@ -10,6 +10,7 @@ import { request } from "@arcjet/next";
 import { stripe } from "./utlis/stripe";
 import { jobListingDurationPricing } from "./utlis/pricingTiers";
 import { inngest } from "./utlis/inngest/client";
+import { revalidatePath } from "next/cache";
 
 const aj = arcjet
   .withRule(
@@ -203,4 +204,53 @@ export async function createJob(data: z.infer<typeof jobSchema>) {
   }
 
   return redirect(stripeSession.url);
+}
+
+export async function saveJobPost(jobId: string) {
+  const session = await requireUser();
+
+  if (!session?.user) {
+    throw new Error("no user, please login");
+  }
+
+  const req = await request();
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
+  }
+
+  await prisma.savedJobPost.create({
+    data: {
+      jobPostId: jobId,
+      userId: session.user.id as string,
+    },
+  });
+
+  revalidatePath(`/job/${jobId}`);
+}
+
+export async function unSaveJobPost(savedJobPostId: string) {
+  const session = await requireUser();
+
+  if (!session?.user) {
+    throw new Error("no user, please login");
+  }
+
+  const req = await request();
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
+  }
+
+  const data = await prisma.savedJobPost.delete({
+    where: {
+      id: savedJobPostId,
+      userId: session.user.id as string,
+    },
+    select: {
+      jobPostId: true,
+    },
+  });
+
+  revalidatePath(`/job/${data.jobPostId}`);
 }
