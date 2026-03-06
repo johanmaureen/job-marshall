@@ -35,43 +35,48 @@ import { countryList } from "@/app/utlis/countrysList";
 import { JobDescriptionEditor } from "../richTextEditors/JobDescriptionEditor";
 import { BenefitsSelector } from "../general/BenefitsSelector";
 import { UploadDropzone } from "../general/UploadThingREExported";
-import { JobListingDurationSelector } from "../general/JobListingDurationSelector";
 import { createJob } from "@/app/actions";
 
-interface CreateJobFormProps {
-  companyName: string;
-  companyLocation: string;
-  companyAbout: string;
-  companyLogo: string;
-  companyXAccount: string | null;
-  companyWebsite: string;
+interface iAppProps {
+  jobPost: {
+    jobTitle: string;
+    employmentType: string;
+    location: string;
+    salaryFrom: number;
+    salaryTo: number;
+    jobDescription: string;
+    benefits: string[];
+    listingDuration: number;
+    id: string;
+    company: {
+      location: string;
+      name: string;
+      about: string;
+      logo: string;
+      website: string;
+      xAccount: string | null;
+    };
+  };
 }
 
-export function CreateJobForm({
-  companyAbout,
-  companyLocation,
-  companyLogo,
-  companyXAccount,
-  companyName,
-  companyWebsite,
-}: CreateJobFormProps) {
+export function EditJobForm({ jobPost }: iAppProps) {
   const form = useForm<z.infer<typeof jobSchema>>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
-      benefits: [],
-      companyDescription: companyAbout,
-      companyLocation: companyLocation,
-      companyName: companyName,
-      companyWebsite: companyWebsite,
-      companyXAccount: companyXAccount || "",
-      employmentType: "",
-      jobDescription: "",
-      jobTitle: "",
-      location: "",
-      salaryFrom: 0,
-      salaryTo: 0,
-      companyLogo: companyLogo,
-      listingDuration: 30,
+      benefits: jobPost.benefits,
+      companyDescription: jobPost.company.about,
+      companyLocation: jobPost.company.location,
+      companyName: jobPost.company.name,
+      companyLogo: jobPost.company.logo,
+      companyWebsite: jobPost.company.website,
+      companyXAccount: jobPost.company.xAccount || "",
+      employmentType: jobPost.employmentType,
+      jobDescription: jobPost.jobDescription,
+      jobTitle: jobPost.jobTitle,
+      location: jobPost.location,
+      salaryFrom: jobPost.salaryFrom,
+      salaryTo: jobPost.salaryTo,
+      listingDuration: jobPost.listingDuration,
     },
   });
 
@@ -90,6 +95,7 @@ export function CreateJobForm({
       setPending(false);
     }
   }
+
   return (
     <Form {...form}>
       <form
@@ -411,25 +417,6 @@ export function CreateJobForm({
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Job Listing Duration</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="listingDuration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <JobListingDurationSelector field={field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
         <Button type="submit" className="w-full" disabled={pending}>
           {pending ? "Submitting..." : "Continue"}
         </Button>
