@@ -294,3 +294,35 @@ export async function editJoBPost(
 
   return redirect("/my-jobs");
 }
+
+export async function deleteJobPost(jobId: string) {
+  const session = await requireUser();
+
+  if (!session?.user) {
+    throw new Error("no user, please login");
+  }
+
+  const req = await request();
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
+  }
+
+  await prisma.jobPost.delete({
+    where: {
+      id: jobId,
+      company: {
+        userId: session.user.id,
+      },
+    },
+  });
+
+  await inngest.send({
+    name: "job/cancel.expiration",
+    data: {
+      jobId: jobId,
+    },
+  });
+
+  return redirect("/my-jobs");
+}
