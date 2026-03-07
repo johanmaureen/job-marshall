@@ -35,7 +35,7 @@ import { countryList } from "@/app/utlis/countrysList";
 import { JobDescriptionEditor } from "../richTextEditors/JobDescriptionEditor";
 import { BenefitsSelector } from "../general/BenefitsSelector";
 import { UploadDropzone } from "../general/UploadThingREExported";
-import { createJob } from "@/app/actions";
+import { editJoBPost } from "@/app/actions";
 
 interface iAppProps {
   jobPost: {
@@ -84,7 +84,7 @@ export function EditJobForm({ jobPost }: iAppProps) {
   async function onSubmit(values: z.infer<typeof jobSchema>) {
     try {
       setPending(true);
-      await createJob(values);
+      await editJoBPost(values, jobPost.id);
     } catch (error) {
       console.log(error);
       if (error instanceof Error && error.message !== "NEXT_REDIRECT") {

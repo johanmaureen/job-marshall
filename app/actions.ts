@@ -254,3 +254,43 @@ export async function unSaveJobPost(savedJobPostId: string) {
 
   revalidatePath(`/job/${data.jobPostId}`);
 }
+
+export async function editJoBPost(
+  data: z.infer<typeof jobSchema>,
+  jobId: string,
+) {
+  const session = await requireUser();
+
+  if (!session?.user) {
+    throw new Error("no user, please login");
+  }
+
+  const req = await request();
+  const decision = await aj.protect(req);
+  if (decision.isDenied()) {
+    throw new Error("Forbidden");
+  }
+
+  const validatedData = jobSchema.parse(data);
+
+  await prisma.jobPost.update({
+    where: {
+      id: jobId,
+      company: {
+        userId: session.user.id as string,
+      },
+    },
+    data: {
+      jobDescription: validatedData.jobDescription,
+      jobTitle: validatedData.jobTitle,
+      employmentType: validatedData.employmentType,
+      location: validatedData.location,
+      salaryFrom: validatedData.salaryFrom,
+      salaryTo: validatedData.salaryTo,
+      listingDuration: validatedData.listingDuration,
+      benefits: validatedData.benefits,
+    },
+  });
+
+  return redirect("/my-jobs");
+}
