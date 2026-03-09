@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/db";
 import { EmptyState } from "./EmtyState";
 import { JobCard } from "./JobCard";
+import { MainPagination } from "./MainPagination";
 
 async function getData() {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
   const data = await prisma.jobPost.findMany({
     where: {
       status: "ACTIVE",
@@ -50,6 +50,9 @@ export async function JobListing() {
           href="/"
         />
       )}
+      <div className="flex justify-center mt-6">
+        <MainPagination totalPages={20} currentPage={15} />
+      </div>
     </>
   );
 }
